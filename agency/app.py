@@ -1,6 +1,6 @@
-#----------------------------------------------------------------------------#
+# ----------------------------------------------------------------------------#
 # Imports
-#----------------------------------------------------------------------------#
+# ----------------------------------------------------------------------------#
 
 from flask import Flask, request, abort, jsonify
 from flask_sqlalchemy import SQLAlchemy
@@ -11,9 +11,9 @@ from .config import Config
 from .models import db, Actor, Movie
 
 
-#----------------------------------------------------------------------------#
+# ----------------------------------------------------------------------------#
 # Creating app and set routes
-#----------------------------------------------------------------------------#
+# ----------------------------------------------------------------------------#
 
 def create_app(config_class=Config):
     # create and configure the app
@@ -21,9 +21,8 @@ def create_app(config_class=Config):
     app.config.from_object(config_class)
     app.url_map.strict_slashes = False
     db.init_app(app)
-    migrate = Migrate(app,db)
+    migrate = Migrate(app, db)
     cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
-
 
     # CORS Headers
     @app.after_request
@@ -39,6 +38,9 @@ def create_app(config_class=Config):
 
         return response
 
+    @app.route('/', methods=['GET'])
+    def index():
+        return jsonify({'message': 'Welcome to Capstone Project'})
 
     @app.route('/actors', methods=['GET'])
     @requires_auth('read:actors')
@@ -64,7 +66,6 @@ def create_app(config_class=Config):
             'success': True,
             'actors': [actor.format() for actor in actors]
         }), 200
-
 
     @app.route('/actors', methods=['POST'])
     @requires_auth('create:actor')
@@ -104,7 +105,6 @@ def create_app(config_class=Config):
             'success': True,
             'actor': actor.format()
         }), 200
-
 
     @app.route('/actors/<int:actor_id>', methods=['PATCH'])
     @requires_auth('update:actor')
@@ -146,7 +146,6 @@ def create_app(config_class=Config):
             'actor': actor.format(),
         }), 200
 
-
     @app.route('/actors/<int:actor_id>', methods=['DELETE'])
     @requires_auth('delete:actor')
     def delete_actor(actor_id):
@@ -176,7 +175,6 @@ def create_app(config_class=Config):
             'actor_id': actor_id
         }), 200
 
-
     @app.route('/movies', methods=['GET'])
     @requires_auth('read:movies')
     def read_movies():
@@ -201,7 +199,6 @@ def create_app(config_class=Config):
             'success': True,
             'movies': [movie.format() for movie in movies]
         }), 200
-
 
     @app.route('/movies', methods=['POST'])
     @requires_auth('create:movie')
@@ -235,7 +232,6 @@ def create_app(config_class=Config):
             'success': True,
             'movie': movie.format()
         }), 200
-
 
     @app.route('/movies/<int:movie_id>', methods=['PATCH'])
     @requires_auth('update:movie')
@@ -274,7 +270,6 @@ def create_app(config_class=Config):
             'movie': movie.format(),
         }), 200
 
-
     @app.route('/movies/<int:movie_id>', methods=['DELETE'])
     @requires_auth('delete:movie')
     def delete_movie(movie_id):
@@ -304,7 +299,6 @@ def create_app(config_class=Config):
             'movie_id': movie_id
         }), 200
 
-
     @app.errorhandler(401)
     def not_authorized(error):
         """
@@ -325,7 +319,6 @@ def create_app(config_class=Config):
             "error": 401,
             "message": "Authentication error."
         }), 401
-
 
     @app.errorhandler(403)
     def forbidden(error):
@@ -348,7 +341,6 @@ def create_app(config_class=Config):
             "message": "Forbidden."
         }), 403
 
-
     @app.errorhandler(404)
     def not_found(error):
         """
@@ -369,7 +361,6 @@ def create_app(config_class=Config):
             "error": 404,
             "message": "Item not found."
         }), 404
-
 
     @app.errorhandler(422)
     def unprocessable(error):
@@ -392,7 +383,6 @@ def create_app(config_class=Config):
             "message": "Request could not be processed."
         }), 422
 
-
     @app.errorhandler(AuthError)
     def auth_error(error):
         """
@@ -413,7 +403,6 @@ def create_app(config_class=Config):
             'error': error.status_code,
             'message': error.error['description']
         }), error.status_code
-
 
     return app
 

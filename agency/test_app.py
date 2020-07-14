@@ -36,24 +36,22 @@ class AgencyTestCase(unittest.TestCase):
         db.drop_all()
         db.create_all()
 
-
     def tearDown(self):
         db.session.remove()
         db.drop_all()
-
 
     def test_should_not_return_actors(self):
         res = self.client().get(
             '/actors',
             headers={
-                'Authorization': f'Bearer {self.app.config.get("PRODUCER_ROLE_TOKEN")}'
+                'Authorization':
+                    f'Bearer {self.app.config.get("PRODUCER_ROLE_TOKEN")}'
             }
         )
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 404)
         self.assertFalse(data['success'])
-
 
     def test_should_return_all_actors(self):
         actor = Actor(name="Robert De Niro", age="77", gender="male")
@@ -62,7 +60,8 @@ class AgencyTestCase(unittest.TestCase):
         res = self.client().get(
             '/actors',
             headers={
-                'Authorization': f'Bearer {self.app.config.get("PRODUCER_ROLE_TOKEN")}'
+                'Authorization':
+                    f'Bearer {self.app.config.get("PRODUCER_ROLE_TOKEN")}'
             }
         )
         data = json.loads(res.data)
@@ -72,7 +71,6 @@ class AgencyTestCase(unittest.TestCase):
 
         actors = Actor.query.all()
         self.assertEqual(len(data['actors']), len(actors))
-
 
     def test_should_create_new_actor(self):
         new_actor_data = {
@@ -86,7 +84,8 @@ class AgencyTestCase(unittest.TestCase):
             data=json.dumps(new_actor_data),
             headers={
                 'Content-Type': 'application/json',
-                'Authorization': f'Bearer {self.app.config.get("PRODUCER_ROLE_TOKEN")}'
+                'Authorization':
+                    f'Bearer {self.app.config.get("PRODUCER_ROLE_TOKEN")}'
             }
         )
         data = json.loads(res.data)
@@ -99,7 +98,6 @@ class AgencyTestCase(unittest.TestCase):
 
         actor_added = Actor.query.get(data['actor']['id'])
         self.assertTrue(actor_added)
-
 
     def test_should_update_existing_actor_data(self):
         actor = Actor(name="Denzel Washington", age=100, gender="male")
@@ -114,7 +112,8 @@ class AgencyTestCase(unittest.TestCase):
             data=json.dumps(actor_data_patch),
             headers={
                 'Content-Type': 'application/json',
-                'Authorization': f'Bearer {self.app.config.get("PRODUCER_ROLE_TOKEN")}'
+                'Authorization':
+                    f'Bearer {self.app.config.get("PRODUCER_ROLE_TOKEN")}'
             }
         )
         data = json.loads(res.data)
@@ -128,7 +127,6 @@ class AgencyTestCase(unittest.TestCase):
         actor_updated = Actor.query.get(data['actor']['id'])
         self.assertEqual(actor_updated.id, actor.id)
 
-
     def test_should_delete_existing_actor(self):
         actor = Actor(name="Humphrey Bogart", age="57", gender="male")
         actor.insert()
@@ -136,7 +134,8 @@ class AgencyTestCase(unittest.TestCase):
         res = self.client().delete(
             f'/actors/%s' % actor.id,
             headers={
-                'Authorization': f'Bearer {self.app.config.get("PRODUCER_ROLE_TOKEN")}'
+                'Authorization':
+                    f'Bearer {self.app.config.get("PRODUCER_ROLE_TOKEN")}'
             }
         )
         data = json.loads(res.data)
@@ -144,7 +143,6 @@ class AgencyTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
         self.assertTrue(data['success'])
         self.assertEqual(data['actor_id'], actor.id)
-
 
     def test_should_not_allow_new_actor_missing_age(self):
         new_actor_data = {
@@ -157,7 +155,8 @@ class AgencyTestCase(unittest.TestCase):
             data=json.dumps(new_actor_data),
             headers={
                 'Content-Type': 'application/json',
-                'Authorization': f'Bearer {self.app.config.get("PRODUCER_ROLE_TOKEN")}'
+                'Authorization':
+                    f'Bearer {self.app.config.get("PRODUCER_ROLE_TOKEN")}'
             }
         )
         data = json.loads(res.data)
@@ -165,7 +164,6 @@ class AgencyTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 422)
         self.assertEqual(data['error'], 422)
         self.assertFalse(data['success'])
-
 
     def test_should_not_update_existing_actor_if_not_found(self):
         actor_data_patch = {
@@ -177,7 +175,8 @@ class AgencyTestCase(unittest.TestCase):
             data=json.dumps(actor_data_patch),
             headers={
                 'Content-Type': 'application/json',
-                'Authorization': f'Bearer {self.app.config.get("PRODUCER_ROLE_TOKEN")}'
+                'Authorization':
+                    f'Bearer {self.app.config.get("PRODUCER_ROLE_TOKEN")}'
             }
         )
         data = json.loads(res.data)
@@ -185,13 +184,13 @@ class AgencyTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 404)
         self.assertEqual(data['error'], 404)
         self.assertFalse(data['success'])
-
 
     def test_should_not_delete_existing_actor_if_not_found(self):
         res = self.client().delete(
             '/actors/1111',
             headers={
-                'Authorization': f'Bearer {self.app.config.get("PRODUCER_ROLE_TOKEN")}'
+                'Authorization':
+                    f'Bearer {self.app.config.get("PRODUCER_ROLE_TOKEN")}'
             }
         )
         data = json.loads(res.data)
@@ -200,19 +199,18 @@ class AgencyTestCase(unittest.TestCase):
         self.assertEqual(data['error'], 404)
         self.assertFalse(data['success'])
 
-
     def test_should_not_return_movies(self):
         res = self.client().get(
             '/movies',
             headers={
-                'Authorization': f'Bearer {self.app.config.get("PRODUCER_ROLE_TOKEN")}'
+                'Authorization':
+                    f'Bearer {self.app.config.get("PRODUCER_ROLE_TOKEN")}'
             }
         )
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 404)
         self.assertFalse(data['success'])
-
 
     def test_should_return_all_movies(self):
         # Insert dummy actor into database.
@@ -222,7 +220,8 @@ class AgencyTestCase(unittest.TestCase):
         res = self.client().get(
             '/movies',
             headers={
-                'Authorization': f'Bearer {self.app.config.get("PRODUCER_ROLE_TOKEN")}'
+                'Authorization':
+                    f'Bearer {self.app.config.get("PRODUCER_ROLE_TOKEN")}'
             }
         )
         data = json.loads(res.data)
@@ -232,7 +231,6 @@ class AgencyTestCase(unittest.TestCase):
 
         movies = Movie.query.all()
         self.assertEqual(len(data['movies']), len(movies))
-
 
     def test_should_create_new_movie(self):
         new_movie_data = {
@@ -245,7 +243,8 @@ class AgencyTestCase(unittest.TestCase):
             data=json.dumps(new_movie_data),
             headers={
                 'Content-Type': 'application/json',
-                'Authorization': f'Bearer {self.app.config.get("PRODUCER_ROLE_TOKEN")}'
+                'Authorization':
+                    f'Bearer {self.app.config.get("PRODUCER_ROLE_TOKEN")}'
             }
         )
         data = json.loads(res.data)
@@ -257,7 +256,6 @@ class AgencyTestCase(unittest.TestCase):
 
         movie_added = Movie.query.get(data['movie']['id'])
         self.assertTrue(movie_added)
-
 
     def test_should_update_existing_movie_data(self):
         movie = Movie(title="Schindler's List", release="1994-05-01")
@@ -272,7 +270,8 @@ class AgencyTestCase(unittest.TestCase):
             data=json.dumps(movie_data_patch),
             headers={
                 'Content-Type': 'application/json',
-                'Authorization': f'Bearer {self.app.config.get("PRODUCER_ROLE_TOKEN")}'
+                'Authorization':
+                    f'Bearer {self.app.config.get("PRODUCER_ROLE_TOKEN")}'
             }
         )
         data = json.loads(res.data)
@@ -285,7 +284,6 @@ class AgencyTestCase(unittest.TestCase):
         movie_updated = Movie.query.get(data['movie']['id'])
         self.assertEqual(movie_updated.id, movie.id)
 
-
     def test_should_delete_existing_movie(self):
         movie = Movie(title="Raging Bull", release="1980-12-19")
         movie.insert()
@@ -293,7 +291,8 @@ class AgencyTestCase(unittest.TestCase):
         res = self.client().delete(
             f'/movies/%s' % movie.id,
             headers={
-                'Authorization': f'Bearer {self.app.config.get("PRODUCER_ROLE_TOKEN")}'
+                'Authorization':
+                    f'Bearer {self.app.config.get("PRODUCER_ROLE_TOKEN")}'
             }
         )
         data = json.loads(res.data)
@@ -301,7 +300,6 @@ class AgencyTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
         self.assertTrue(data['success'])
         self.assertEqual(data['movie_id'], movie.id)
-
 
     def test_should_not_allow_new_movie_missing_date(self):
         new_movie_data = {
@@ -313,7 +311,8 @@ class AgencyTestCase(unittest.TestCase):
             data=json.dumps(new_movie_data),
             headers={
                 'Content-Type': 'application/json',
-                'Authorization': f'Bearer {self.app.config.get("PRODUCER_ROLE_TOKEN")}'
+                'Authorization':
+                    f'Bearer {self.app.config.get("PRODUCER_ROLE_TOKEN")}'
             }
         )
         data = json.loads(res.data)
@@ -321,7 +320,6 @@ class AgencyTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 422)
         self.assertEqual(data['error'], 422)
         self.assertFalse(data['success'])
-
 
     def test_should_not_update_existing_movie_if_not_found(self):
         movie_data_patch = {
@@ -333,7 +331,8 @@ class AgencyTestCase(unittest.TestCase):
             data=json.dumps(movie_data_patch),
             headers={
                 'Content-Type': 'application/json',
-                'Authorization': f'Bearer {self.app.config.get("PRODUCER_ROLE_TOKEN")}'
+                'Authorization':
+                    f'Bearer {self.app.config.get("PRODUCER_ROLE_TOKEN")}'
             }
         )
         data = json.loads(res.data)
@@ -341,13 +340,13 @@ class AgencyTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 404)
         self.assertEqual(data['error'], 404)
         self.assertFalse(data['success'])
-
 
     def test_should_not_delete_existing_movie_if_not_found(self):
         res = self.client().delete(
             '/movies/1111',
             headers={
-                'Authorization': f'Bearer {self.app.config.get("PRODUCER_ROLE_TOKEN")}'
+                'Authorization':
+                    f'Bearer {self.app.config.get("PRODUCER_ROLE_TOKEN")}'
             }
         )
         data = json.loads(res.data)
@@ -355,7 +354,6 @@ class AgencyTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 404)
         self.assertEqual(data['error'], 404)
         self.assertFalse(data['success'])
-
 
     def test_assistant_role_should_return_all_actors(self):
         actor = Actor(name="Robert De Niro", age="77", gender="male")
@@ -365,7 +363,8 @@ class AgencyTestCase(unittest.TestCase):
             '/actors',
             headers={
                 'Content-Type': 'application/json',
-                'Authorization': f'Bearer {self.app.config.get("ASSISTANT_ROLE_TOKEN")}'
+                'Authorization':
+                    f'Bearer {self.app.config.get("ASSISTANT_ROLE_TOKEN")}'
             }
         )
         data = json.loads(res.data)
@@ -375,7 +374,6 @@ class AgencyTestCase(unittest.TestCase):
 
         actors = Actor.query.all()
         self.assertEqual(len(data['actors']), len(actors))
-
 
     def test_assistant_role_should_not_create_new_actor(self):
         new_actor_data = {
@@ -389,12 +387,12 @@ class AgencyTestCase(unittest.TestCase):
             data=json.dumps(new_actor_data),
             headers={
                 'Content-Type': 'application/json',
-                'Authorization': f'Bearer {self.app.config.get("ASSISTANT_ROLE_TOKEN")}'
+                'Authorization':
+                    f'Bearer {self.app.config.get("ASSISTANT_ROLE_TOKEN")}'
             }
         )
 
         self.assertEqual(res.status_code, 401)
-
 
     def test_director_role_should_create_new_actor(self):
         new_actor_data = {
@@ -408,7 +406,8 @@ class AgencyTestCase(unittest.TestCase):
             data=json.dumps(new_actor_data),
             headers={
                 'Content-Type': 'application/json',
-                'Authorization': f'Bearer {self.app.config.get("DIRECTOR_ROLE_TOKEN")}'
+                'Authorization':
+                    f'Bearer {self.app.config.get("DIRECTOR_ROLE_TOKEN")}'
             }
         )
 
@@ -423,7 +422,6 @@ class AgencyTestCase(unittest.TestCase):
         actor_added = Actor.query.get(data['actor']['id'])
         self.assertTrue(actor_added)
 
-
     def test_director_role_should_not_create_new_movie(self):
         new_movie_data = {
             'title': "Casablanca",
@@ -435,7 +433,8 @@ class AgencyTestCase(unittest.TestCase):
             data=json.dumps(new_movie_data),
             headers={
                 'Content-Type': 'application/json',
-                'Authorization': f'Bearer {self.app.config.get("DIRECTOR_ROLE_TOKEN")}'
+                'Authorization':
+                    f'Bearer {self.app.config.get("DIRECTOR_ROLE_TOKEN")}'
             }
         )
         data = json.loads(res.data)
