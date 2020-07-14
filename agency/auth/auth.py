@@ -1,40 +1,35 @@
-#----------------------------------------------------------------------------#
+# ----------------------------------------------------------------------------#
 # Imports
-#----------------------------------------------------------------------------#
+# ----------------------------------------------------------------------------#
 
 import json
 from flask import request, _request_ctx_stack, abort
 from functools import wraps
 from jose import jwt
+import os
 from urllib.request import urlopen
-from ..config import Config
 
 
-#----------------------------------------------------------------------------#
+# ----------------------------------------------------------------------------#
 # Configuration
-#----------------------------------------------------------------------------#
+# ----------------------------------------------------------------------------#
 
-AUTH0_DOMAIN = Config.AUTH0_DOMAIN
-ALGORITHMS = Config.AUTH0_ALGORITHMS
-API_AUDIENCE = Config.AUTH0_API_AUDIENCE
+AUTH0_DOMAIN = os.environ.get('AUTH0_DOMAIN')
+ALGORITHMS = os.environ.get('AUTH0_ALGORITHMS')
+API_AUDIENCE = os.environ.get('AUTH0_API_AUDIENCE')
 
 
-#----------------------------------------------------------------------------#
+# ----------------------------------------------------------------------------#
 # Auth functions
-#----------------------------------------------------------------------------#
+# ----------------------------------------------------------------------------#
 
-## AuthError Exception
-'''
-AuthError Exception
-A standardized way to communicate auth failure modes
-'''
+# AuthError Exception
+# A standardized way to communicate auth failure modes
 class AuthError(Exception):
     def __init__(self, error, status_code):
         self.error = error
         self.status_code = status_code
 
-
-## Auth Header
 
 # Gets auth header.
 # Returns: split_auth_header (string)
@@ -138,7 +133,7 @@ def verify_decode_jwt(token):
         except jwt.JWTClaimsError:
             raise AuthError({
                 'code': 'invalid_claims',
-                'description': 'Incorrect claims. Please, check the audience and issuer.'
+                'description': 'Incorrect claims (audience and issuer).'
             }, 401)
         except Exception:
             raise AuthError({
